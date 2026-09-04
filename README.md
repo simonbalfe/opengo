@@ -9,6 +9,7 @@ Requirements:
 - Go 1.25 or newer
 - macOS for automatic browser opening
 - A ChatGPT account with Codex access
+- Device code login enabled in ChatGPT under **Settings → Security**. On a managed workspace, an admin must enable it in workspace permissions. See [OpenAI's authentication guide](https://learn.chatgpt.com/docs/auth#preferred-device-code-authentication-beta).
 
 ```sh
 go install github.com/simonbalfe/opengo@latest
