@@ -1,8 +1,6 @@
 # opengo
 
-`opengo` is a minimal Go CLI that signs in with a ChatGPT subscription and sends conversations directly to the Codex Responses backend.
-
-It reproduces the headless device-code authentication route used by OpenCode. It does not run Codex app-server and does not require an OpenAI API key.
+`opengo` is a minimal Go CLI that signs in with a ChatGPT subscription and sends conversations directly to the Codex Responses backend. It does not run Codex app-server and does not require an OpenAI API key.
 
 ## Quick start
 

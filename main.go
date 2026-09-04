@@ -145,7 +145,6 @@ func run(ctx context.Context, model string, authOnly bool) error {
 	}
 
 	input := bufio.NewScanner(os.Stdin)
-	// ponytail: full in-memory history; add compaction when conversations approach the model context limit.
 	history := make([]message, 0, 16)
 	fmt.Printf("opengo (%s). Type /exit to quit.\n", model)
 
