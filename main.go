@@ -15,6 +15,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -26,6 +27,15 @@ const (
 	userAgent    = "opengo/0.1"
 	instructions = "You are a concise, helpful coding agent."
 )
+
+var modelOptions = []string{
+	"gpt-5.6-sol",
+	"gpt-5.6-terra",
+	"gpt-5.6-luna",
+	"gpt-5.5",
+	"gpt-5.4",
+	"gpt-5.4-mini",
+}
 
 type credentials struct {
 	AccessToken  string `json:"access_token"`
@@ -98,7 +108,7 @@ type streamError struct {
 }
 
 func main() {
-	model := flag.String("model", "gpt-5.6-sol", "Codex model")
+	model := flag.String("model", "", "Codex model (skips selector)")
 	flag.Usage = func() {
 		fmt.Fprintln(flag.CommandLine.Output(), "usage: opengo [-model model] [auth]")
 		flag.PrintDefaults()
@@ -145,6 +155,15 @@ func run(ctx context.Context, model string, authOnly bool) error {
 	}
 
 	input := bufio.NewScanner(os.Stdin)
+	if model == "" {
+		model = modelOptions[0]
+		if terminal, err := os.Stdin.Stat(); err == nil && terminal.Mode()&os.ModeCharDevice != 0 {
+			model, err = selectModel(input)
+			if err != nil {
+				return err
+			}
+		}
+	}
 	history := make([]message, 0, 16)
 	fmt.Printf("opengo (%s). Type /exit to quit.\n", model)
 
@@ -179,6 +198,31 @@ func run(ctx context.Context, model string, authOnly bool) error {
 			continue
 		}
 		history = append(history, message{Role: "assistant", Content: []content{{Type: "output_text", Text: answer}}})
+	}
+}
+
+func selectModel(input *bufio.Scanner) (string, error) {
+	fmt.Println("Choose a model:")
+	for index, model := range modelOptions {
+		fmt.Printf("  %d. %s\n", index+1, model)
+	}
+	for {
+		fmt.Print("Model [1]: ")
+		if !input.Scan() {
+			if err := input.Err(); err != nil {
+				return "", err
+			}
+			return "", errors.New("model selection cancelled")
+		}
+		choice := strings.TrimSpace(input.Text())
+		if choice == "" {
+			return modelOptions[0], nil
+		}
+		index, err := strconv.Atoi(choice)
+		if err == nil && index >= 1 && index <= len(modelOptions) {
+			return modelOptions[index-1], nil
+		}
+		fmt.Printf("Enter a number from 1 to %d.\n", len(modelOptions))
 	}
 }
 

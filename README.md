@@ -17,10 +17,10 @@ opengo auth
 opengo
 ```
 
-Choose another model with:
+`opengo` asks you to choose a model. Skip the selector with:
 
 ```sh
-./opengo -model gpt-5.6-sol
+opengo -model gpt-5.6-sol
 ```
 
 Enter `/exit` to leave the chat.
@@ -55,7 +55,7 @@ The credential file is outside this repository and must never be committed.
 
 Each prompt is appended to an in-memory conversation. `opengo` sends that history to the Codex Responses endpoint, reads the server-sent event stream, prints text deltas immediately, and adds the final answer to the next request's history.
 
-The default model is `gpt-5.6-sol`.
+For non-interactive input, the default model is `gpt-5.6-sol`.
 
 ## What this proves
 
